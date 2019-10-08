@@ -40,28 +40,23 @@ router.get("/", function(req, res){
         let firstNum = 0;
         let secondNum = 0;
 
+        // 몇개의 페이지가 구성되어있는지 확인하는 request
         await request(option, function(error, response, body){
+
+            if(error) throw error;
 
             let $ = cheerio.load(body);
             let divSearch = $("div.prd_search");
 
             if(divSearch.find("div.info").length > 0) {
-                // 처음 기본 메인 화면 데이터
-                divSearch.find("div.info").each(function(index, elem) {
-                    product.productName = $(this).find(".name a").text();
-                    product.salePrice = $(this).find(".price").find(".sell").text().split(",").join("");
-                    product.costPrice = $(this).find(".price").find(".consumer").text().split(",").join("");
-                    productArr.push(product);
-                });
-
                 let btn = $("#btn_more").find("a").text().split(" ")[1];
                 firstNum = parseInt(btn.split("/")[0]);
                 secondNum = parseInt(btn.split("/")[1]);
             }
         }); // end request    
     
-        // 페이징 처리 부분 데이터
-        for(let i=2; i<secondNum-firstNum+2; i++) {
+        // 데이터 파싱 부분
+        for(let i=1; i<secondNum-firstNum+2; i++) {
             const option = {
                 uri: `${URL}/main/exec.php`,
                 method: "GET",
@@ -76,10 +71,9 @@ router.get("/", function(req, res){
                     search_str: SEARCH
                 }
             } // option
-            console.log(1)
+
             await request(option, function(error, response, body) {
             
-                console.log(0)
                 const $ = cheerio.load(JSON.parse(body).content);
                 
                 divSearch = $("li .box");
@@ -93,8 +87,8 @@ router.get("/", function(req, res){
                 });
             }); // request
         } // end for
-        console.log(productArr);
-        res.write("Index Page");
+        console.log(productArr.length);
+        res.send(productArr);
         res.end();
     })();
 
