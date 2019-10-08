@@ -1,7 +1,9 @@
 const express = require("express");
-const app = express();
-
 const indexRouter = require("./routes/index");
+const sequelize = require("./models/index").sequelize;
+
+const app = express();
+sequelize.sync(); // sequelize 동기화
 
 app.use(indexRouter);
 

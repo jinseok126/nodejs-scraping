@@ -5,11 +5,19 @@ const router = express.Router();
 const request = require("request-promise");
 const cheerio = require("cheerio");
 
+const models = require("../models");
+
+router.get("/test", function(req, res){
+    
+    res.write("Success");
+    res.end();
+});
+
 router.get("/", function(req, res){
 
     const URL = "https://www.concepts1one.co.kr";
 
-    let SEARCH = "test";
+    let SEARCH = "슬랙스";
    
     const option = {
         uri: `${URL}/shop/search_result.php`,
@@ -40,12 +48,10 @@ router.get("/", function(req, res){
             if(divSearch.find("div.info").length > 0) {
                 // 처음 기본 메인 화면 데이터
                 divSearch.find("div.info").each(function(index, elem) {
-            
                     product.productName = $(this).find(".name a").text();
-                    product.salePrice = $(this).find(".price").find(".sell").text();
-                    product.costPrice = $(this).find(".price").find(".consumer").text();
+                    product.salePrice = $(this).find(".price").find(".sell").text().split(",").join("");
+                    product.costPrice = $(this).find(".price").find(".consumer").text().split(",").join("");
                     productArr.push(product);
-        
                 });
 
                 let btn = $("#btn_more").find("a").text().split(" ")[1];
@@ -75,20 +81,18 @@ router.get("/", function(req, res){
             
                 console.log(0)
                 const $ = cheerio.load(JSON.parse(body).content);
-                console.log(2);
+                
+                divSearch = $("li .box");
 
-                divSearch = $("div.prd_search");
                 // 페이징 데이터
-                divSearch.find("div.info").each(function(index, elem) {
-            
+                divSearch.find(".info").each(function(index, elem) {
                     product.productName = $(this).find(".name a").text();
-                    product.salePrice = $(this).find(".price").find(".sell").text();
-                    product.costPrice = $(this).find(".price").find(".consumer").text();
+                    product.salePrice = parseInt($(this).find(".price").find(".sell").text().split(",").join("").split(" ")[0]);
+                    product.costPrice = parseInt($(this).find(".price").find(".consumer").text().split(",").join("").split(" ")[0]);
                     productArr.push(product);
                 });
             }); // request
         } // end for
-
         console.log(productArr);
         res.write("Index Page");
         res.end();
