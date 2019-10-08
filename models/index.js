@@ -35,5 +35,6 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.Product = require("./product")(sequelize, Sequelize);
+db.Searchs = require("./searchs")(sequelize, Sequelize);
 
 module.exports = db;

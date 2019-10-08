@@ -6,12 +6,11 @@ module.exports = function(sequelize, DataType){
             autoIncrement: true,
             comment: "인덱스"
         },
-        searchName: {
-            type: DataType.STRING,
-            unique: true,
+        searchIdx: {
+            type: DataType.INTEGER,
             allowNull: false,
-            field: "search_name",
-            comment: "검색어"
+            field: "search_idx",
+            comment: "검색어 인덱스"
         },
         productName: {
             type: DataType.STRING,
