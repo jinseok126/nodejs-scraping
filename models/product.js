@@ -30,6 +30,12 @@ module.exports = function(sequelize, DataType){
             defaultValue: 0,
             field: "cost_price",
             comment: "세일 가격"
+        },
+        titleImg: {
+            type: DataType.STRING(1000),
+            defaultValue: "",
+            field: "tilte_img",
+            comment: "타이틀 이미지 URL"
         }
     }, {
         timestamps: true,

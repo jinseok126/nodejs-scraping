@@ -16,7 +16,7 @@ router.get("/test", function(req, res){
 router.get("/", function(req, res){
 
     const URL = "https://www.concepts1one.co.kr";
-    const SEARCH = "티셔츠";
+    const SEARCH = "슬랙스";
     
     (async () => {
         // 검색어 count
@@ -68,7 +68,7 @@ router.get("/", function(req, res){
                 const searchIdxData = await models.Searchs.create({searchName:SEARCH}).then( (result) => {
                     return result.dataValues.idx;
                 })
-                
+
                 // 데이터 파싱 부분
                 for(let i=1; i<secondNum-firstNum+2; i++) {
                     const option = {
@@ -88,18 +88,22 @@ router.get("/", function(req, res){
                     
                     await request(option, function(error, response, body) {
                     
-                        const $ = cheerio.load(JSON.parse(body).content);
+                        const $ = cheerio.load(JSON.parse(body).content, {xmlMode: true});
                         
                         const divSearch = $("li .box");
 
                         // 페이징 데이터
-                        divSearch.find(".info").each(function(index, elem) {
+                        divSearch.each(function(index, elem) {
+
+                            const infoClass = $(this).find(".info");
+                            const imgClass = $(this).find(".img");
 
                             const product = {
                                 searchIdx: searchIdxData,
-                                productName: $(this).find(".name a").text(),
-                                salePrice: parseInt($(this).find(".price").find(".sell").text().split(",").join("").split(" ")[0]),
-                                costPrice: parseInt($(this).find(".price").find(".consumer").text().split(",").join("").split(" ")[0])
+                                productName: infoClass.find(".name a").text(),
+                                salePrice: parseInt(infoClass.find(".price").find(".sell").text().split(",").join("").split(" ")[0]),
+                                costPrice: parseInt(infoClass.find(".price").find(".consumer").text().split(",").join("").split(" ")[0]),
+                                titleImg: imgClass.find(".prdimg").html()
                             }
                             x.push(product);
                         });
@@ -116,7 +120,7 @@ router.get("/", function(req, res){
                     }) === i;
                 });
                 
-                // console.log(refreshData);
+                console.log(refreshData);
                 await models.Product.bulkCreate(refreshData);
             } // end if
         } // end if
