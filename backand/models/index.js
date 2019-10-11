@@ -37,4 +37,8 @@ db.Sequelize = Sequelize;
 db.Product = require("./product")(sequelize, Sequelize);
 db.Searchs = require("./searchs")(sequelize, Sequelize);
 
+db.Product.belongsTo(db.Searchs, {foreignKey: "search_idx", targetKey: "idx"});
+// db.Searchs.hasOne(db.Product, {foreignKey: "search_idx"})
+
+
 module.exports = db;

@@ -1,11 +1,13 @@
+
 module.exports = function(sequelize, DataType){
-    return sequelize.define("product", {
+
+    const product = sequelize.define("Product", {
         idx: {
             type: DataType.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             comment: "인덱스"
-        },
+        },  
         searchIdx: {
             type: DataType.INTEGER,
             allowNull: false,
@@ -42,6 +44,8 @@ module.exports = function(sequelize, DataType){
         underscore: true,
         freezeTableName: true,
         tableName: "product_tbl",
-        comment: "상품정보 테이블"
+        comment: "상품정보 테이블" 
     });
+
+    return product;
 }

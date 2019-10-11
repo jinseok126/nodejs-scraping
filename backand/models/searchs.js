@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataType){
-    return sequelize.define("Searchs", {
+    const searchs = sequelize.define("Searchs", {
         idx: {
             type: DataType.INTEGER,
             primaryKey: true,
@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataType){
         searchName: {
             type: DataType.STRING,
             unique: true,
+            field: "search_name",
             comment: "검색어"
         }
     }, {
@@ -18,4 +19,6 @@ module.exports = function(sequelize, DataType){
         freezeTableName: true,
         comment: "검색어 테이블"
     });
+
+    return searchs;
 };

@@ -16,19 +16,18 @@ router.get("/test", function(req, res){
 router.get("/", function(req, res){
 
     const URL = "https://www.concepts1one.co.kr";
-    const SEARCH = "슬랙스";
-    
+    const SEARCH = "test";
+
     (async () => {
         // 검색어 count
         let searchCount = await models.Searchs.count({
-            where: {searchname: SEARCH}
+            where: {searchName: SEARCH}
         }).then((results)=> {
            return results;
         });
 
         let productArr = new Array();
         const x = new Array();
-        const x1 = new Array();
 
         // 존재하지 않는 검색어일 경우 데이터를 확인하고 데이터가 존재할 경우 검색어 저장 AND 검색 결과 데이터도 저장
         if(searchCount === 0) {
@@ -120,14 +119,22 @@ router.get("/", function(req, res){
                     }) === i;
                 });
                 
-                console.log(refreshData);
                 await models.Product.bulkCreate(refreshData);
             } // end if
-        } // end if
-
+        }
         
-
-        res.send(productArr);
+        const resultArr = await models.Product.findAll({
+            include: {model: models.Searchs, where: {searchName: SEARCH}}
+        }).then((results) => {
+            return results;
+        })
+        
+        if(resultArr.length == 0) {
+            res.send("empty");
+        } else {
+            res.send(resultArr);
+        }
+        
         res.end();
     })();
 
