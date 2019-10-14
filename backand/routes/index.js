@@ -16,7 +16,7 @@ router.get("/test", function(req, res){
 router.get("/", function(req, res){
 
     const URL = "https://www.concepts1one.co.kr";
-    const SEARCH = "test";
+    const SEARCH = req.query.search;
 
     (async () => {
         // 검색어 count
