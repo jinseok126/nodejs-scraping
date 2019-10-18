@@ -33,10 +33,38 @@ router.post('/insert', function(req, res, next) {
 
         console.log(resultData);
 
-        res.send({result: resultData});
+        res.send({msg: resultData});
         res.end();
     })();
     
 });
+
+router.post('/loginCheck', function(req, res, next) {
+
+    const user = req.body;
+
+    (async() => {
+        const idCheck = await models.User.findAndCountAll({
+            where: user
+        }).then(result => {
+
+            return result.count;
+        })
+
+        let accessToken = "";
+        if(idCheck === 1) {
+            jwt.sign({
+                userId: user.userId
+            }, secretObj.secret, function(err, token) {
+                if(!err) { 
+                    accessToken = token;
+                    console.log(accessToken);
+                }
+            });
+        }
+        
+        res.json({check: idCheck, token: accessToken});
+    })();
+})
 
 module.exports = router;
