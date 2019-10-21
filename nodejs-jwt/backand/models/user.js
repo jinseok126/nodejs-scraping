@@ -26,7 +26,13 @@ module.exports = function(sequelize, DataType) {
         },
         userEmail: {
             type: DataType.STRING,
-            field: "user_email"
+            field: "user_email",
+            comment: "유저 이메일"
+        },
+        refreshToken: {
+            type: DataType.STRING,
+            field: "refresh_token",
+            comment: "유저 refresh token"
         }
     }, {
         timestamps: true,

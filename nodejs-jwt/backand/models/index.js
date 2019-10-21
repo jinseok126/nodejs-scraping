@@ -37,4 +37,6 @@ db.Sequelize = Sequelize;
 db.Role = require("./role")(sequelize, Sequelize);
 db.User = require("./user")(sequelize, Sequelize);
 
+db.User.belongsTo(db.Role, {foreignKey: "roleIdx", targetKey: "idx"});
+
 module.exports = db;
