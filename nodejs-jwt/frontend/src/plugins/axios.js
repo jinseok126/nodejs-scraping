@@ -15,6 +15,7 @@ let config = {
   // withCredentials: true, // Check cross-site Access-Control
 };
 
+axios.defaults.headers.common['Authorization'] = localStorage.getItem("token"); 
 const _axios = axios.create(config);
 
 _axios.interceptors.request.use(

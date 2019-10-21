@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-
+const jwt_decode = require('jwt-decode');
 
 const secretObj = require('../config/jwt');
 const models = require("../models/index");
@@ -52,13 +52,13 @@ router.post('/insert', function(req, res, next) {
 router.post('/loginCheck', function(req, res, next) {
 
     const user = req.body;
-
+    
     (async() => {
-
+        
         // 등급이 user인 사용자만 필터
         const idCheck = await models.User.findOne({
-            attributes: [[models.sequelize.fn("COUNT", "idx"), "count"]], 
-            include: [{ model: models.Role, where: {roleName: 'user'},  }],
+            attributes: [[ models.sequelize.fn("COUNT", "idx"), "count" ]], 
+            include: [{ model: models.Role, where: {roleName: 'user'} }],
             where: user
         }).then(result => {
             return result.dataValues.count;
@@ -71,7 +71,7 @@ router.post('/loginCheck', function(req, res, next) {
 
         // 아이디가 존재할 경우
         if(idCheck === 1) {
-            
+
             // access token 발급
             token.accessToken = jwt.sign({
                 userId: user.userId,
@@ -83,7 +83,8 @@ router.post('/loginCheck', function(req, res, next) {
             token.refreshToken = jwt.sign({
                 userId: user.userId,
                 roleName: 'user',
-                exp: Math.floor(Date.now() / 1000) + (60*60),
+                // exp: Math.floor(Date.now() / 1000) + (60*60),
+                exp: Math.floor(Date.now() / 1000),
             }, secretObj.secret);
 
             // refresh token save
@@ -97,29 +98,67 @@ router.post('/loginCheck', function(req, res, next) {
     })();
 })
 
-router.get('/tokenCheck/:token', function(req, res, next) {
+router.get('/tokenCheck', function(req, res, next) {
 
-    const accessToken = req.params.token;
+    const accessToken = req.headers.authorization;
+
+    // const accessToken = req.params.token;
     let msg = "";
+    
     jwt.verify(accessToken, secretObj.secret, function(err, decoded) {
+        (async () => {
+            // 사용 불가능한 토큰일 경우
+            if(err) {
+                // 기간이 만료된 토큰일 경우 리프레쉬 토큰을 사용할 수 있는지 확인
+                if(err.message === "jwt expired") {
+                    
+                        console.log(0);
+                        // jwt decode
+                        const tokenDecoded = jwt_decode(accessToken);
+                        
+                        const resultToken = await models.User.findOne({
+                            attributes: ['refreshToken'],
+                            include: [{model: models.Role, attributes: ['roleName']}],
+                            where: {userId: tokenDecoded.userId}
+                        }).then(result => {
+                            return result;
+                        });
+                        
+                        const refreshToken = resultToken.dataValues.refreshToken;   // refresh token
+                        const roleName = resultToken.Role.dataValues.roleName;      // role name
+                        let afterAccessToken = "";
+                        
+                        jwt.verify(refreshToken, secretObj.secret, function(err, decoded) {
+                            // 사용가능한 refreshToken일 경우
+                            if(!err) {
+                                // accessToken 재발급
+                                afterAccessToken = jwt.sign({
+                                    userId: tokenDecoded.userId,
+                                    roleName: roleName,
+                                    exp: Math.floor(Date.now() / 1000),
+                                }, secretObj.secret);
 
-        // 사용 불가능한 토큰일 경우
-        if(err) {
-            // 기간이 만료된 토큰일 경우 리프레쉬 토큰을 사용할 수 있는지 확인
-            if(err.message === "jwt expired") {
-                msg = "Token expiration";
+                                // 브라우저에 전달
+                                msg = afterAccessToken;
+                            } else {
+                                msg = "Token expiration";
+                            } // if
+                        }); // jwt.verify
+                    
+                } else {
+                    msg = "Token not availble";
+                }
+            // 사용가능한 토큰일 경우
             } else {
-                msg = "Token not availble";
+                msg = "Token available";
             }
-        // 사용가능한 토큰일 경우
-        } else {
-            msg = "Token available";
-        }
-    });
+            console.log(`msg: ${msg}`);
 
-
-    res.json({msg: msg});
-    res.end();
-});
+            res.json({msg: msg});
+            res.end();
+        })(); // async
+    }); // jwt.verify
+    
+}); // router
 
 module.exports = router;

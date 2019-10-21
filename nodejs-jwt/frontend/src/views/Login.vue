@@ -65,24 +65,14 @@
 
 <script>
 export default {
-    data: () => ({
-        userId: "",
-        userPw: ""
-    }),
-    methods: {
-        login() {
-            axios.post('/user/loginCheck', {
-                userId: this.userId,
-                userPw: this.userPw
-            }).then((result) => {
-                const resultData = result.data;
-                if(resultData.check === 1) {
-                    // localstorage에 토큰 저장 후 메인 화면으로 이동
-                    localStorage.setItem('token', resultData.token);
-                    location.href="/";
-                }
-            })
-        } // login
-    } // methods
+  data: () => ({
+    userId: '',
+    userPw: ''
+  }),
+  methods: {
+    login: function () {
+      this.$store.dispatch('login', {id: this.userId, pw: this.userPw})
+    } // login
+  } // methods
 }
 </script>

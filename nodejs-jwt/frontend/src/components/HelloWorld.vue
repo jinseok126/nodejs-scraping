@@ -13,15 +13,20 @@
         ></v-img>
       </v-flex>
 
-      <v-flex>{{ this.$store.state.token }}</v-flex>      <!-- state 직접 접근 -->
-      <v-flex>{{ this.$store.getters.getToken }}</v-flex> <!-- getters 직접 접근 -->
-      <v-flex>{{ getToken }}</v-flex>                     <!-- App.vue의 mapGetters 사용 -->
+      <v-flex>
+        {{ this.$store.state.token }}       <!-- state 직접 접근 -->
+        {{ this.$store.getters.getToken }}  <!-- getters 직접 접근 -->
+        {{ getToken }}                      <!-- App.vue의 mapGetters 사용 -->
+      </v-flex>
+      <v-flex>
+        <v-btn @click="tokenCheck">test</v-btn>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     ecosystem: [
@@ -81,8 +86,13 @@ export default {
     ])
   },
   methods: {
-    removeToken: function() {
-      this.$store.commit('removeToken');
+    removeToken: function () {
+      this.$store.commit('removeToken')
+    },
+    tokenCheck: function () {
+      axios.get('/user/tokenCheck').then(result => {
+        console.log(result.data.msg);
+      })
     }
   }
 }

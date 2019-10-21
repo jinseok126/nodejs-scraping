@@ -13,11 +13,11 @@
       <v-btn text @click="logoutBtn" v-else>
         <span class="mr-2">LOGOUT</span>
       </v-btn>
-    </v-app-bar>    
+    </v-app-bar>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     urlArr: ['/login', '/join']
@@ -35,10 +35,9 @@ export default {
       this.$store.commit('removeToken');
     },
     */
-    logoutBtn: function() {
-      this.$store.commit('removeToken');
+    logoutBtn: function () {
+      this.$store.dispatch('logout')
     }
-    
   }
 }
 </script>

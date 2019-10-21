@@ -74,34 +74,33 @@ export default {
     idConfirm: 0
   }),
   methods: {
-    handleSubmit() {
-        if(this.idConfirm === 0) {
-            alert("ID perform a check for overlapping Identification");
-        } if(this.idConfirm === 1) {
-            axios.post('/user/insert', {
-                userId: this.userId,
-                userPw: this.userPw,
-                userEmail: this.userEmail
-            }).then((result) => {
-                console.log(result);
-                if(result.data.msg === "success") {
-                    location.href="/login";
-                }
-            })
-        } else {
-            alert("error");
-        }
-    },
-    idCheck() {
-        axios.get(`/user/idCheck/${this.userId}`, {
-        }).then((res) => {
-            if(res.data.result === 0){
-                this.idConfirm = 1;
-            } else {
-                alert("Duplicate ID exists");
-                this.idConfirm = 0;
-            }
+    handleSubmit: function() {
+      if(this.idConfirm === 0) {
+        alert("ID perform a check for overlapping Identification");
+      } else if(this.idConfirm === 1) {
+        axios.post('/user/insert', {
+          userId: this.userId,
+          userPw: this.userPw,
+          userEmail: this.userEmail
+        }).then((result) => {
+          console.log(result);
+          if(result.data.msg === "success") {
+            location.href="/login";
+          }
         })
+      } else {
+        alert("error");
+      }
+    },
+    idCheck: function() {
+      axios.get(`/user/idCheck/${this.userId}`).then((res) => {
+        if(res.data.result === 0){
+          this.idConfirm = 1;
+        } else {
+          alert("Duplicate ID exists");
+          this.idConfirm = 0;
+        }
+      })
     }
   }
 }
