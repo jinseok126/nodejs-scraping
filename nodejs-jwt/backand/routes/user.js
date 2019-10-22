@@ -76,15 +76,15 @@ router.post('/loginCheck', function(req, res, next) {
             token.accessToken = jwt.sign({
                 userId: user.userId,
                 roleName: 'user',
-                exp: Math.floor(Date.now() / 1000) + (30),
+                exp: Math.floor(Date.now() / 1000),
             }, secretObj.secret);
 
             // refresh token 발급
             token.refreshToken = jwt.sign({
                 userId: user.userId,
                 roleName: 'user',
-                // exp: Math.floor(Date.now() / 1000) + (60*60),
-                exp: Math.floor(Date.now() / 1000),
+                exp: Math.floor(Date.now() / 1000) + (60*60),
+                // exp: Math.floor(Date.now() / 1000),
             }, secretObj.secret);
 
             // refresh token save
