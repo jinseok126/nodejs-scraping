@@ -90,8 +90,10 @@ export default {
       this.$store.commit('removeToken')
     },
     tokenCheck: function () {
-      axios.get('/user/tokenCheck').then(result => {
-        console.log(result.data.msg);
+      // console.log(localStorage.getItem("token"));
+      // console.log(this.$store.state.token);
+      axios.post('/user/test').then(result => {
+        console.log('start');
       })
     }
   }

@@ -1,4 +1,5 @@
 const express = require('express');
+
 const jwt = require('jsonwebtoken');
 const jwt_decode = require('jwt-decode');
 
@@ -20,7 +21,7 @@ router.get('/idCheck/:id', function(req, res, next){
         res.json({result: idCheck});
         res.end();
     })();
-})
+});
 
 router.post('/insert', function(req, res, next) {
 
@@ -45,7 +46,6 @@ router.post('/insert', function(req, res, next) {
         res.send({msg: resultData});
         res.end();
     })(); // async
-    
 }); // router
 
 // user login check router
@@ -76,7 +76,7 @@ router.post('/loginCheck', function(req, res, next) {
             token.accessToken = jwt.sign({
                 userId: user.userId,
                 roleName: 'user',
-                exp: Math.floor(Date.now() / 1000),
+                exp: Math.floor(Date.now() / 1000) + (30),
             }, secretObj.secret);
 
             // refresh token 발급
@@ -96,23 +96,23 @@ router.post('/loginCheck', function(req, res, next) {
         
         res.json({ check: idCheck, token: token.accessToken });
     })();
-})
+});
 
-router.get('/tokenCheck', function(req, res, next) {
-
+///////////////////////////////////////////////////
+// 토큰 체크하는 middleware (interceptor)
+router.use(function(req, res, next) {
     const accessToken = req.headers.authorization;
-
-    // const accessToken = req.params.token;
     let msg = "";
     
     jwt.verify(accessToken, secretObj.secret, function(err, decoded) {
         (async () => {
+            let afterAccessToken = null;
+
             // 사용 불가능한 토큰일 경우
             if(err) {
                 // 기간이 만료된 토큰일 경우 리프레쉬 토큰을 사용할 수 있는지 확인
                 if(err.message === "jwt expired") {
                     
-                        console.log(0);
                         // jwt decode
                         const tokenDecoded = jwt_decode(accessToken);
                         
@@ -126,7 +126,6 @@ router.get('/tokenCheck', function(req, res, next) {
                         
                         const refreshToken = resultToken.dataValues.refreshToken;   // refresh token
                         const roleName = resultToken.Role.dataValues.roleName;      // role name
-                        let afterAccessToken = "";
                         
                         jwt.verify(refreshToken, secretObj.secret, function(err, decoded) {
                             // 사용가능한 refreshToken일 경우
@@ -137,28 +136,42 @@ router.get('/tokenCheck', function(req, res, next) {
                                     roleName: roleName,
                                     exp: Math.floor(Date.now() / 1000),
                                 }, secretObj.secret);
-
-                                // 브라우저에 전달
-                                msg = afterAccessToken;
+                                
+                                console.log(afterAccessToken);
+                                res.header("Authorization", afterAccessToken);
+                                msg = "Token Available";
                             } else {
                                 msg = "Token expiration";
                             } // if
                         }); // jwt.verify
-                    
+                        
                 } else {
-                    msg = "Token not availble";
+                    msg = err.message;
                 }
             // 사용가능한 토큰일 경우
             } else {
-                msg = "Token available";
+                msg = "Token Available";
             }
-            console.log(`msg: ${msg}`);
-
-            res.json({msg: msg});
-            res.end();
+            
+            if(msg === "Token Available") {
+                next();
+            } else {
+                res.json({msg: msg});
+                res.end();
+            }
         })(); // async
     }); // jwt.verify
+});
+//////////////////////////////////////////////////
+// 이 아래부터는 토큰 체크가 필수인 라우터
+
+router.post('/test', function(req, res, next) {
     
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    // es.json({msg: "Token Available"});
+    res.end();
+
 }); // router
+
 
 module.exports = router;

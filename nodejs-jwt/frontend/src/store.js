@@ -24,7 +24,7 @@ export default new Vuex.Store({
         if (resultData.check === 1) {
           // localstorage에 토큰 저장 후 메인 화면으로 이동
           localStorage.setItem('token', resultData.token)
-          // location.href = '/'
+          location.href = '/'
         } else {
           alert('login failure')
         }
