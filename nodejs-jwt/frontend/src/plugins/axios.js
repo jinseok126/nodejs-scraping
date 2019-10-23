@@ -1,8 +1,9 @@
 "use strict";
 
-import Vue from 'vue';
-import axios from "axios";
-import router from '../router';
+import Vue from 'vue'
+import axios from 'axios'
+import router from '../routes/router'
+import store from '../store'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -69,15 +70,16 @@ _axios.interceptors.response.use(
 
       // 리프레쉬 토큰을 사용하여 access 토큰을 발급한 경우
       if(token) {
-        localStorage.setItem("token", token);
+        store.dispatch('addToken', token);
       } else {
         const msg = response.data.msg;
         // 사용가능한 토큰이 아닐경우
         // 토큰을 없애고 다시 로그인 유도
         if(msg) {
           // 로그인 유도
-          localStorage.removeItem("token");
-          router.push("/login");
+          // localStorage.removeItem("token");
+          alert(msg);
+          // router.push("/login");
           // location.href="/login";
           throw new axios.Cancel(msg);
           

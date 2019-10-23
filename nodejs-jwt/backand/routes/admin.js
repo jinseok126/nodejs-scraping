@@ -9,8 +9,11 @@ router.get('/', function(req, res, next) {
     res.end();
 });
 
+router.post('/loginCheck', function(req, res, next) {
+    duplicate.loginCheck(req, res, next);
+});
+
 router.use(function(req, res, next) {
-    console.log('#################');
     middleware.tokenCheck(req, res, next);
 });
 

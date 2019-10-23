@@ -8,6 +8,7 @@ const models = require("../models/index");
 const router = express.Router();
 
 const middleware = require("../custom/middleware");
+const duplicate = require("../custom/duplicate");
 
 // 아이디 체크
 router.get('/idCheck/:id', function(req, res, next){
@@ -51,52 +52,7 @@ router.post('/insert', function(req, res, next) {
 
 // user login check router
 router.post('/loginCheck', function(req, res, next) {
-
-    const user = req.body;
-    
-    (async() => {
-        
-        // 등급이 user인 사용자만 필터
-        const idCheck = await models.User.findOne({
-            attributes: [[ models.sequelize.fn("COUNT", "idx"), "count" ]], 
-            include: [{ model: models.Role, where: {roleName: 'user'} }],
-            where: user
-        }).then(result => {
-            return result.dataValues.count;
-        })
-
-        const token = {
-            accessToken: "",
-            refreshToken: ""
-        }
-
-        // 아이디가 존재할 경우
-        if(idCheck === 1) {
-
-            // access token 발급
-            token.accessToken = jwt.sign({
-                userId: user.userId,
-                roleName: 'user',
-                exp: Math.floor(Date.now() / 1000),
-            }, secretObj.secret);
-
-            // refresh token 발급
-            token.refreshToken = jwt.sign({
-                userId: user.userId,
-                roleName: 'user',
-                exp: Math.floor(Date.now() / 1000) + (60*60),
-                // exp: Math.floor(Date.now() / 1000),
-            }, secretObj.secret);
-
-            // refresh token save
-            models.User.update(
-                { refreshToken: token.refreshToken },   // SET
-                { where: user }                         // WEHRE
-            );
-        }
-        
-        res.json({ check: idCheck, token: token.accessToken });
-    })();
+    duplicate.loginCheck(req, res, next);
 });
 
 ///////////////////////////////////////////////////
@@ -106,7 +62,6 @@ router.use(function(req, res, next) {
 });
 //////////////////////////////////////////////////
 // 이 아래부터는 토큰 체크가 필수인 라우터
-
 router.post('/test', function(req, res, next) {
     
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");

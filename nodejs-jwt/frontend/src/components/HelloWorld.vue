@@ -18,9 +18,11 @@
         {{ this.$store.getters.getToken }}  <!-- getters 직접 접근 -->
         {{ getToken }}                      <!-- App.vue의 mapGetters 사용 -->
       </v-flex>
+
       <v-flex>
         <v-btn @click="tokenCheck">test</v-btn>
       </v-flex>
+      
     </v-layout>
   </v-container>
 </template>
