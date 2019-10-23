@@ -76,10 +76,15 @@ _axios.interceptors.response.use(
         // 사용가능한 토큰이 아닐경우
         // 토큰을 없애고 다시 로그인 유도
         if(msg) {
-          // 로그인 유도
-          // localStorage.removeItem("token");
           alert(msg);
-          // router.push("/login");
+          // 로그인 유도
+          if(msg !== "Access Denied") {
+            localStorage.removeItem("token");
+            router.push("/login");
+          } else {
+            router.push("/");
+          }
+          
           // location.href="/login";
           throw new axios.Cancel(msg);
           
