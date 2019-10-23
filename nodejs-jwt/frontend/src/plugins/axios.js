@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 import axios from "axios";
+import router from '../router';
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -63,6 +64,7 @@ _axios.interceptors.response.use(
 
     // interceptor를 거쳐야하는 부분
     if(result === -1) {
+
       const token = response.headers.authorization;
 
       // 리프레쉬 토큰을 사용하여 access 토큰을 발급한 경우
@@ -75,8 +77,10 @@ _axios.interceptors.response.use(
         if(msg) {
           // 로그인 유도
           localStorage.removeItem("token");
-          location.href="/login";
+          router.push("/login");
+          // location.href="/login";
           throw new axios.Cancel(msg);
+          
         }
         // else {}  // 사용가능한 access 토큰일 경우
       }

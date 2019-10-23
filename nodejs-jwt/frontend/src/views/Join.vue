@@ -85,7 +85,8 @@ export default {
         }).then((result) => {
           console.log(result);
           if(result.data.msg === "success") {
-            location.href="/login";
+            // location.href="/login";
+            this.$router.push("/login");
           }
         })
       } else {
@@ -102,7 +103,7 @@ export default {
           this.idConfirm = 0;
         }
       })
-    }
-  }
+    } // idcheck
+  } // methods
 }
 </script>

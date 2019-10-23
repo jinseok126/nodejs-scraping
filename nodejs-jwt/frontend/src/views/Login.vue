@@ -24,7 +24,7 @@
                 <v-tooltip right>
                     <template v-slot:activator="{ on }">
                     <v-btn
-                        href="/join"
+                        @click="$router.push('/join')"
                         color="primary"
                     >
                         JOIN

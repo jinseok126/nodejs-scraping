@@ -19,6 +19,7 @@ router.get('/', function(req, res, next) {
     res.end();
 });
 
+
 router.get('/test', function(req, res, next) {
     const token = "eyJhbGciOiJIUzI1NiIsInR5cCㅅㅁㄱㅁㄴㅁNDIyNDAsImV4cCI6MTU3MTA0MjU0MH0.W0x3XN0Dvas_NN7Yc2-HOQoh6u6nKvk1JxehH9jcp-g";
     const decoded = jwt.verify(token, secretObj.secret, function(err, decoded){
