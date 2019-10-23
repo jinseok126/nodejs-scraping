@@ -22,6 +22,6 @@ export default {
         console.log(result);
       });
     }
-  }
+  } // methods
 }
 </script>
