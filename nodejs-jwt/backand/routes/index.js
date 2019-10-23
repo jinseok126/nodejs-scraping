@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const secretObj = require('../config/jwt');
+const hashPassword = require("../config/sha512");
 
 const router = express.Router();
 
@@ -36,6 +37,14 @@ router.get('/test', function(req, res, next) {
     }else {
         res.send("False");
     }
+});
+
+router.get('/crypto', function(req, res, next) {
+
+    const pw = hashPassword("123456", "admin");
+    console.log(pw);
+    res.json({value: hashPassword("123456", "admin")});
+    res.end();
 });
 
 module.exports = router;

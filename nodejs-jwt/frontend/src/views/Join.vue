@@ -54,7 +54,7 @@
 
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn type="submit" color="primary">Login</v-btn>
+                    <v-btn type="submit" color="primary">Join</v-btn>
                     </v-card-actions>
                 </v-form>
                 </v-card-text>
@@ -93,6 +93,7 @@ export default {
       }
     },
     idCheck: function() {
+      
       axios.get(`/user/idCheck/${this.userId}`).then((res) => {
         if(res.data.result === 0){
           this.idConfirm = 1;

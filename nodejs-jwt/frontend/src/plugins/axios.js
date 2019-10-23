@@ -39,20 +39,35 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   function(response) {
     // Do something with response data
+
     const configData = response.config;
     const currentUrl = configData.url.replace(configData.baseURL, '');
 
+    // alert(currentUrl.indexOf('/user/idCheck/'));
+    // REST 방식으로 값을 넘겨주는 URL 모음
+    
+
     // axios 사용 시 interceptor 안거치는 배열
-    const excludeUrls = ['/user/loginCheck', 'test'];
+    const excludeUrls = ['/user/loginCheck', '/user/insert', '/user/idCheck/'];
+    // alert(excludeUrls.indexOf(currentUrl));
+
+    
+    let result = -1;
+    
+    excludeUrls.find(function(element) {
+      if(currentUrl.indexOf(element) === 0) {
+        result = 0;
+        return;
+      }
+    });
 
     // interceptor를 거쳐야하는 부분
-    if(excludeUrls.indexOf(currentUrl) === -1) {
+    if(result === -1) {
       const token = response.headers.authorization;
 
       // 리프레쉬 토큰을 사용하여 access 토큰을 발급한 경우
       if(token) {
         localStorage.setItem("token", token);
-        
       } else {
         const msg = response.data.msg;
         // 사용가능한 토큰이 아닐경우
