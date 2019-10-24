@@ -8,9 +8,11 @@ const models = require("../models/index");
 const createToken = function(userId, roleName, kinds) {
     let time = Math.floor(Date.now() / 1000);
     if(kinds === "accessToken") {
-        time = Math.floor(Date.now() / 1000) + (10);
+        // time = Math.floor(Date.now() / 1000) + (10);
+        time = Math.floor(Date.now() / 1000);
     } else if(kinds == "refreshToken") {
-        time = Math.floor(Date.now() / 1000) + (60 * 60);
+        // time = Math.floor(Date.now() / 1000) + (60 * 60);
+        time = Math.floor(Date.now() / 1000);
     } else {
         console.log("token kinds different error");
         return;
