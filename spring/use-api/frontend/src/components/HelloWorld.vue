@@ -92,15 +92,17 @@ export default {
       this.$store.commit('removeToken')
     },
     tokenCheck: function () {
-      // console.log(localStorage.getItem("token"));
-      // console.log(this.$store.state.token);
+      const token = this.$store.state.token;
+      console.log(token);
+    
+      // axios.post('https://api.github.com/users/typicode').then(result => { // fake server
       axios.post('/user/test').then(result => {
         console.log('start');
       })
     }
   },
   created () {
-    console.log(this.$route);
+    // console.log(this.$route);
   }
 }
 </script>

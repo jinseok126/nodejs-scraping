@@ -39,7 +39,7 @@ public class DemoController {
 	@RequestMapping("/")
 	public String demo() {
 		
-		UserEntity user = userRepo.findByUserId("test");;
+		UserEntity user = userRepo.findByUserId("test");
 		
 		String token = jwt.createToken(user);
 		log.info(""+jwt.tokenCheck(token));
@@ -76,6 +76,7 @@ public class DemoController {
 			// response.setHeader("Authorization", accessToken);
 		}
 		
+		// get 방식 redirect가 아닌 POST 방식이나 header로 vue client에 값을 전송할 수 있는지 확인해보기
 		return new ModelAndView("redirect:http://127.0.0.1:8080?token="+accessToken);
 	}
 	

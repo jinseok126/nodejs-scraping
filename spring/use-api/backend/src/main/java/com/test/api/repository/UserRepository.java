@@ -13,4 +13,5 @@ import com.test.api.entity.UserEntity;
  */
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 	public UserEntity findByUserId(String userId);
+	public UserEntity findByUserIdAndUserPw(String userId, String userPw);
 }

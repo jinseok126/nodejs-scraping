@@ -12,6 +12,7 @@ import store from '../store'
 
 let config = {
   baseURL: 'http://127.0.0.1:3000'
+  // baseURL: 'http://localhost:8181/api'
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
@@ -28,7 +29,12 @@ _axios.interceptors.request.use(
     // ###########################################################
     // 이 부분 vuex에 접근해서 토큰 값을 가져오는 걸로 해보기()
     // ###########################################################
-    config.headers.common['Authorization'] = localStorage.getItem("token");
+    // config.headers.common['Content-Type'] = 'application/json'
+    // config.headers.common['Content-Type'] = 'application/x-www-form-urlencoded'
+    // config.headers.common['access-control-allow-origin'] = "*"
+    // config.headers.common['Sec-Fetch-Site'] = "same-origin"
+    config.headers.common['Authorization'] = localStorage.getItem("token")
+    
     return config;
   },
   function(error) {
@@ -40,58 +46,6 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
   function(response) {
-    // Do something with response data
-
-    const configData = response.config;
-    const currentUrl = configData.url.replace(configData.baseURL, '');
-
-    // alert(currentUrl.indexOf('/user/idCheck/'));
-    // REST 방식으로 값을 넘겨주는 URL 모음
-    
-
-    // axios 사용 시 interceptor 안거치는 배열
-    const excludeUrls = ['/user/loginCheck', '/user/insert', '/user/idCheck/'];
-    // alert(excludeUrls.indexOf(currentUrl));
-
-    
-    let result = -1;
-    
-    excludeUrls.find(function(element) {
-      if(currentUrl.indexOf(element) === 0) {
-        result = 0;
-        return;
-      }
-    });
-
-    // interceptor를 거쳐야하는 부분
-    if(result === -1) {
-
-      const token = response.headers.authorization;
-
-      // 리프레쉬 토큰을 사용하여 access 토큰을 발급한 경우
-      if(token) {
-        store.dispatch('addToken', token);
-      } else {
-        const msg = response.data.msg;
-        // 사용가능한 토큰이 아닐경우
-        // 토큰을 없애고 다시 로그인 유도
-        if(msg) {
-          alert(msg);
-          // 로그인 유도
-          if(msg !== "Access Denied") {
-            localStorage.removeItem("token");
-            router.push("/login");
-          } else {
-            router.push("/");
-          }
-          
-          // location.href="/login";
-          throw new axios.Cancel(msg);
-          
-        }
-        // else {}  // 사용가능한 access 토큰일 경우
-      }
-    }
     return response;
   },
   function(error) {

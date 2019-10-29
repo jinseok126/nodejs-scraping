@@ -3,6 +3,10 @@
  */
 package com.test.api.config;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -23,8 +27,8 @@ import lombok.extern.slf4j.Slf4j;
  * @author user
  *
  */
-@Component
 @Slf4j
+@Component
 public class JwtProvider {
 
 	private long accessTokenValidMilisecond = 1000L * (60 * 60);	// 1시간
@@ -65,15 +69,48 @@ public class JwtProvider {
 	}
 	
 	public boolean tokenValid(String token) {
-		
+		log.info("test");
 		boolean flag = false;
 		try { 
 			Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+			log.info("flag = "+Jwts.parser().setSigningKey(key).parseClaimsJws(token));
 			flag = true;
 		} catch (JwtException e) {
 			flag = false;
 		}
 		
 		return flag;
+	}
+	
+	public void naverTokenCheck(String token) {
+		String header = "Bearer "+token;
+		try {
+			String apiURL = "https://openapi.naver.com/v1/nid/me";
+			URL url = new URL(apiURL);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Authorization", header);
+			int responseCode = con.getResponseCode();
+			
+			BufferedReader br;
+			
+			// success
+			if(responseCode == 200) {
+				br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			} else {
+				br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+			}
+			
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while((inputLine = br.readLine()) != null) {
+				response.append(inputLine);
+			}
+			br.close();
+			log.info(response.toString());
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

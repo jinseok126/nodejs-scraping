@@ -7,7 +7,7 @@ import AdminHome from '../views/admin/AdminHome'
 import store from '../store'
 import jwt_decode from 'jwt-decode'
 
-Vue.use(Router)
+
 
 const adminCheck = () => (to, from, next) => {
   const token = store.getters.getToken;
@@ -31,11 +31,17 @@ const adminCheck = () => (to, from, next) => {
 
 const tokenCheck = () => (to, from, next) => {
   
-  console.log(to);
-  console.log(from);
-
-  // return next();   // 인증 성공 시
+  const token = to.query.token;
+  if(token === undefined || token === "" || token === null) {
+    return next();
+  } else {
+    store.dispatch('addToken', token);
+    location.href="/";
+    return next();
+  }
 };
+
+Vue.use(Router)
 
 export default new Router({
   mode: 'history',
