@@ -62,6 +62,7 @@ const loginCheck = function(req, res, next) {
             );
         }
         
+        res.header("Authorization", "test");
         res.json({ check: idCheck, token: token.accessToken });
     })();
 }

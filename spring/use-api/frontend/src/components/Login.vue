@@ -57,7 +57,7 @@
                 </v-card-text>
                 <v-card-actions>
                 <v-spacer></v-spacer>
-                <a :href=naver_login_url><img src='../assets/naver_login.png' width="200" /></a>
+                <a @click="locationNaverLogin"><img src='../assets/naver_login.png' width="200" /></a>
                 <v-btn color="primary" @click="login">Login</v-btn>
                 </v-card-actions>
             </v-card>
@@ -70,23 +70,30 @@
 
 <script>
 export default {
+
   data: () => ({
     userId: '',
     userPw: '',
     client_id: 'GhIlT_MuU_qke9rxjV8q',
-    callback_url: 'http://localhost:3000/test',
+    callback_url: 'http://localhost:3000/oauth/login',
     naver_login_url: 'https://nid.naver.com/oauth2.0/authorize?response_type=code',
     state: 123  // 이건 뭔지 모르겠음 암튼 보내야 된다고 함 비교해야함
   }),
+  
   methods: {
     login: function () {
       this.$store.dispatch('login', {id: this.userId, pw: this.userPw})
-    } // login
+    },  // login
+    locationNaverLogin: function() {
+      const random = Math.random().toString(36).substring(2, 15);
+      // csrf 공격 대비를 위한 resource server와 resource owner의 인증 비교를 위한 랜덤 값
+      this.naver_login_url += "&state="+random;
+      location.href=this.naver_login_url;
+    }
   }, // methods
   created() {
     this.naver_login_url += "&client_id=" + this.client_id
     this.naver_login_url += "&redirect_url=" + this.callback_url
-    this.naver_login_url += "&state="+this.state
   }
 }
 </script>

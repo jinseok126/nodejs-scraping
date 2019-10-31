@@ -29,11 +29,19 @@ const adminCheck = () => (to, from, next) => {
   return next();   // 인증 성공 시
 };
 
+const test = () => (to, from, next) => {
+  console.log(to);
+  console.log(from)
+  
+  
+  // return next();   // 인증 성공 시
+};
+
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', name: 'home', component: Home },
+    { path: '/', name: 'home', component: Home, beforeEnter: test() },
     { path: '/login', name: 'login', component: Login },
     { path: '/join', name: 'join', component: Join },
     { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() }

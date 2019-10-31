@@ -7,6 +7,7 @@ const duplicate = require("./duplicate");
 
 const tokenCheck = function(req, res, next) {
     const accessToken = req.headers.authorization;
+    console.log(accessToken);
     let msg = "";
     
     const currentURL = req.originalUrl;

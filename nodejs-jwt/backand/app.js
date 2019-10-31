@@ -11,7 +11,7 @@ const app = express();
 sequelize.sync();
 
 const corsOptions = {
-    origin: 'http://127.0.0.1:8080',
+    origin: 'http://127.0.0.1:8081',
     // cors와 axios response header 에러 이슈 해결
     // header의 키를 exposedHeaders에 넣어줘야 header의 값을 사용할 수 있음
     exposedHeaders: 'Authorization' 
