@@ -3,7 +3,10 @@ import Router from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Join from '../views/Join.vue'
+import DaumMap from '../views/DaumMap.vue'
 import AdminHome from '../views/admin/AdminHome'
+
+
 import store from '../store'
 import jwt_decode from 'jwt-decode'
 
@@ -50,7 +53,8 @@ export default new Router({
     { path: '/', name: 'home', component: Home, beforeEnter: tokenCheck() },
     { path: '/login', name: 'login', component: Login },
     { path: '/join', name: 'join', component: Join },
-    { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() }
+    { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() },
+    { path: '/map', name: 'daumMap', component: DaumMap }
   ]
 })
 

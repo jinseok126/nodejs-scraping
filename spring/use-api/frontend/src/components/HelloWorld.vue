@@ -21,6 +21,7 @@
 
       <v-flex>
         <v-btn @click="tokenCheck">test</v-btn>
+        <v-btn @click="$router.push('/map')">Map Test</v-btn>
       </v-flex>
       
     </v-layout>
