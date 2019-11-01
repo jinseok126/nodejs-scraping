@@ -58,6 +58,7 @@
                 <v-card-actions>
                 <v-spacer></v-spacer>
                 <a @click="locationNaverLogin"><img src='../assets/naver_login.png' width="200" /></a>
+                <a @click="test"><img src='../assets/kakao_login.png' width="200" /></a>
                 <v-btn color="primary" @click="login">Login</v-btn>
                 </v-card-actions>
             </v-card>
@@ -75,11 +76,11 @@ export default {
     userId: '',
     userPw: '',
     client_id: 'GhIlT_MuU_qke9rxjV8q',
-    callback_url: 'http://localhost:3000/oauth/login',
+    callback_url: 'http://localhost:3000/oauth/login/type/naver',
     naver_login_url: 'https://nid.naver.com/oauth2.0/authorize?response_type=code',
     state: 123  // 이건 뭔지 모르겠음 암튼 보내야 된다고 함 비교해야함
   }),
-  
+
   methods: {
     login: function () {
       this.$store.dispatch('login', {id: this.userId, pw: this.userPw})
@@ -89,6 +90,9 @@ export default {
       // csrf 공격 대비를 위한 resource server와 resource owner의 인증 비교를 위한 랜덤 값
       this.naver_login_url += "&state="+random;
       location.href=this.naver_login_url;
+    }, 
+    test: function() {
+      location.href="https://kauth.kakao.com/oauth/authorize?client_id=1026731d07732a439790b2935243d042&redirect_uri=http://localhost:3000/oauth/login/type/kakao&response_type=code"
     }
   }, // methods
   created() {
