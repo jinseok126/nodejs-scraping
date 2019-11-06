@@ -55,7 +55,7 @@ export default {
     },
     searchMap: function() {
       this.items = [];
-      axios.get('https://dapi.kakao.com/v2/local/search/address.json?query='+this.searchKey, {
+      axios.get('https://dapi.kakao.com/v2/local/search/keyword.json?query='+this.searchKey, {
         headers: {
           Authorization: `KakaoAK 1026731d07732a439790b2935243d042`
         }
@@ -71,6 +71,9 @@ export default {
       this.center.lat=y;
       this.center.lng=x;
     }
+  }, 
+  created() {
+    console.log(VueDaumMap)
   }
 }
 </script>
