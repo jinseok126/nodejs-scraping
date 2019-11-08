@@ -18,11 +18,14 @@ import org.springframework.stereotype.Service;
 import com.exam.test.entity.UserEntity;
 import com.exam.test.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author user
  *
  */
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
@@ -31,15 +34,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
+		log.info("UserDetailsServiceImpl loadUserByusername");
+		
 		UserEntity user = userRepo.findByUserId(username);
 		if(user == null) {
 			throw new UsernameNotFoundException(username);
 		}
-		
+
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(user.getRoles().getRole()));
 		
 		return new User(username, user.getUserPw(), authorities);
 	}
-
 }

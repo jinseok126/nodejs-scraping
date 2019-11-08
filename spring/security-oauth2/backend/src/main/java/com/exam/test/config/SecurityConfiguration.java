@@ -10,11 +10,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
+import com.exam.test.security.JwtAuthenticationFilter;
+import com.exam.test.security.JwtAuthorizationFilter;
 import com.exam.test.security.UserDetailsServiceImpl;
 
 
@@ -40,10 +43,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	CustomDeniedHandler customDeniedHandler;
 	
+//	@Autowired
+//	CustomAuthenticationProvider customAuthenticationProvider;
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		// auth.inMemoryAuthentication().withUser("test").password(passwordEncoder().encode("123456")).roles("USER");
 		auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
+		// auth.authenticationProvider(customAuthenticationProvider);
 	}
 	
 	@Override
@@ -54,10 +61,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/user/**", "/user").hasAuthority("USER")
 			.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
 			.anyRequest().authenticated().and()
-			.formLogin().failureHandler(customFailureHandler).and()
+			.formLogin()
+			.usernameParameter("username").passwordParameter("password")
+			// .successHandler(new CustomSuccessHandler())
+			.failureHandler(customFailureHandler).and()
 			.exceptionHandling().accessDeniedHandler(customDeniedHandler);
 		
-		http.csrf().disable();	// 개발시 에만 사용
+		http.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+			.addFilter(new JwtAuthenticationFilter(authenticationManager()))
+			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+			.cors().and().csrf().disable();	// 개발시 에만 사용
 	}
 	
 	@Bean
