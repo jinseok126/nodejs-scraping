@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-	@GetMapping({"/demo", "/"})
+	@GetMapping({"/demo", "/", "/test"})
 	public String demo() {
 		return "User DEMO PAGE";
 	}

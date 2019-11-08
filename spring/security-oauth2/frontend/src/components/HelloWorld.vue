@@ -94,10 +94,14 @@ export default {
     tokenCheck: function () {
       // console.log(localStorage.getItem("token"));
       // console.log(this.$store.state.token);
-      axios.post('/user/test').then(result => {
-        console.log('start');
+      axios.get('/user/test').then(result => {
+        console.log(result);
+        const status = result.headers.status;
+        if(status === "false") {
+          alert("로그인 상태가 아님.");
+        }
       })
-    }
-  }
+    } // tokenCheck Method
+  } // methods
 }
 </script>

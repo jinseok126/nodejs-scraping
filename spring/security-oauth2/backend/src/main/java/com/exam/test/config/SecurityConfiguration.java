@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
+import com.exam.test.handler.CustomSuccessHandler;
 import com.exam.test.security.JwtAuthenticationFilter;
 import com.exam.test.security.JwtAuthorizationFilter;
 import com.exam.test.security.UserDetailsServiceImpl;
@@ -43,6 +44,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	CustomDeniedHandler customDeniedHandler;
 	
+	@Autowired
+	CustomSuccessHandler customSuccessHandler;
+	
 //	@Autowired
 //	CustomAuthenticationProvider customAuthenticationProvider;
 	
@@ -63,7 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated().and()
 			.formLogin()
 			.usernameParameter("username").passwordParameter("password")
-			// .successHandler(new CustomSuccessHandler())
+			.successHandler(customSuccessHandler)
 			.failureHandler(customFailureHandler).and()
 			.exceptionHandling().accessDeniedHandler(customDeniedHandler);
 		

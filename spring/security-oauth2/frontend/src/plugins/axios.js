@@ -28,7 +28,7 @@ _axios.interceptors.request.use(
     // ###########################################################
     // 이 부분 vuex에 접근해서 토큰 값을 가져오는 걸로 해보기()
     // ###########################################################
-    // config.headers.common['Authorization'] = localStorage.getItem("token");
+    config.headers.common['Authorization'] = localStorage.getItem("token");
     return config;
   },
   function(error) {

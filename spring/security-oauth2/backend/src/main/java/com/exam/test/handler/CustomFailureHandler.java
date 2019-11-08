@@ -29,6 +29,5 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
 
 		String message = exception.getMessage();
 		log.info("message = "+message);
-		
 	}
 }

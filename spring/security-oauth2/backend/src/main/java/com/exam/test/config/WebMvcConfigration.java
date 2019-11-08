@@ -19,8 +19,7 @@ public class WebMvcConfigration implements WebMvcConfigurer {
 		registry.addMapping("/**")
 				.allowedOrigins("http://localhost:8080")
 				.allowedMethods("OPTIONS", "POST", "GET")
-				.allowedHeaders("content-type", "Access-Control-Allow-Headers")
-				.exposedHeaders("Authorization");
-								 	
+				.allowedHeaders("content-type", "Access-Control-Allow-Headers", "Authorization")
+				.exposedHeaders("Authorization", "status");
 	}
 }
