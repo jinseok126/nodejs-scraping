@@ -8,11 +8,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.endpoint.NimbusAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
@@ -20,6 +28,8 @@ import com.exam.test.handler.CustomSuccessHandler;
 import com.exam.test.security.JwtAuthenticationFilter;
 import com.exam.test.security.JwtAuthorizationFilter;
 import com.exam.test.security.UserDetailsServiceImpl;
+
+import lombok.AllArgsConstructor;
 
 
 /**
@@ -33,6 +43,8 @@ import com.exam.test.security.UserDetailsServiceImpl;
  */
 @Configuration
 @EnableWebSecurity
+@EnableOAuth2Client	// oauth2 구성 설정
+@AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -47,8 +59,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	CustomSuccessHandler customSuccessHandler;
 	
-//	@Autowired
-//	CustomAuthenticationProvider customAuthenticationProvider;
+	@Bean
+	public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+	    return new HttpSessionOAuth2AuthorizationRequestRepository();
+	}
+	
+	@Bean
+	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+	    return new NimbusAuthorizationCodeTokenResponseClient();
+	}
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -57,25 +76,42 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// auth.authenticationProvider(customAuthenticationProvider);
 	}
 	
+//	@Override
+//    public void configure(WebSecurity web) {
+//		web.ignoring()
+//			.antMatchers("/**");
+//	}
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
-		http.authorizeRequests()
-			.antMatchers("/").permitAll()
-			.antMatchers("/user/**", "/user").hasAuthority("USER")
-			.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
-			.anyRequest().authenticated().and()
-			.formLogin()
-			.usernameParameter("username").passwordParameter("password")
-			.successHandler(customSuccessHandler)
-			.failureHandler(customFailureHandler).and()
-			.exceptionHandling().accessDeniedHandler(customDeniedHandler);
+
+		http.cors().and().csrf().disable();	// 개발시 에만 사용
 		
 		http.sessionManagement()
-			.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+			// SessionCreationPolicy.STATELESS 사용 시 OAuth2AuthenticationToken 못얻어옴
+			// 내 생각엔 SessionCreationPolicy.STATELESS 사용하게 되면 SecurityContext를 얻기 위한 HttpSession 얻지 못해서 그런거 같다
+			// .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+		
+			// SessionCreationPolicy.NEVER HttpSession를 사용하지 않지만 있으면 사용한다.
+			.sessionCreationPolicy(SessionCreationPolicy.NEVER).and()	
 			.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager()))
-			.cors().and().csrf().disable();	// 개발시 에만 사용
+			.addFilter(new JwtAuthorizationFilter(authenticationManager()));
+		
+		http.authorizeRequests()
+				.antMatchers("/login", "/oauth_login").permitAll()
+				.antMatchers("/user/**", "/user").hasAuthority("USER")
+				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
+				.anyRequest().authenticated().and()
+			.formLogin()
+				.usernameParameter("username").passwordParameter("password")
+				.successHandler(customSuccessHandler)
+				.failureHandler(customFailureHandler).and()
+				.exceptionHandling().accessDeniedHandler(customDeniedHandler).and()
+			.oauth2Login()
+		      .authorizationEndpoint()
+		      .baseUri("/oauth2/authorize-client")
+		      .authorizationRequestRepository(authorizationRequestRepository())
+		      .and().tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient());
 	}
 	
 	@Bean

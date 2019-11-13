@@ -92,6 +92,30 @@
 		    <scope>runtime</scope>
 		</dependency>
 		
+		
+		<!-- oauth start -->
+		<dependency>
+		    <groupId>org.springframework.security.oauth</groupId>
+		    <artifactId>spring-security-oauth2</artifactId>
+		    <version>2.3.7.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-oauth2-client</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.security.oauth.boot</groupId>
+		    <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+		   <version>2.0.0.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+		<!-- oauth end -->
 	</dependencies>
 
 	<build>

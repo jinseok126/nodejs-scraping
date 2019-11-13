@@ -47,9 +47,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		
 		UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
 		if(authentication == null) {
-			log.info("Null");
 			response.addHeader("status", "false");
-			// filterChain.doFilter(request, response);
+			filterChain.doFilter(request, response);
 			return;
 		} else {
 			response.addHeader("status", "true");
@@ -64,6 +63,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		String token = request.getHeader(SecurityConstants.TOKEN_HEADER);
 		
 		if(!StringUtils.isEmpty(token) && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+			log.info(token);
 			try {
 				byte[] signingKey = SecurityConstants.JWT_SECRET.getBytes();
 				
@@ -76,7 +76,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	                    .get("rol")).stream()
 	                    .map(authority -> new SimpleGrantedAuthority((String) authority))
 	                    .collect(Collectors.toList());
-
+				
+				log.info("username = "+username);
 				
 				if(!StringUtils.isEmpty(username)) {
 					return new UsernamePasswordAuthenticationToken(username, null, authorities);
