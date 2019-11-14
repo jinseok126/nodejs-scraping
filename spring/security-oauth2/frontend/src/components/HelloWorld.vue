@@ -98,7 +98,7 @@ export default {
         console.log(result);
         const status = result.headers.status;
         if(status === "false") {
-          alert("로그인 상태가 아님.");
+          alert("토큰 만료!");
         }
       })
     } // tokenCheck Method

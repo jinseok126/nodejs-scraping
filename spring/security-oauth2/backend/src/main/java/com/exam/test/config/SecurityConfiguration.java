@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.endpoint.NimbusAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
@@ -66,7 +66,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Bean
 	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-	    return new NimbusAuthorizationCodeTokenResponseClient();
+	    // return new NimbusAuthorizationCodeTokenResponseClient();	// Deprecated
+		return new DefaultAuthorizationCodeTokenResponseClient();
 	}
 	
 	@Override
@@ -76,11 +77,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// auth.authenticationProvider(customAuthenticationProvider);
 	}
 	
-//	@Override
-//    public void configure(WebSecurity web) {
-//		web.ignoring()
-//			.antMatchers("/**");
-//	}
+	@Override
+    public void configure(WebSecurity web) {
+		web.ignoring()
+			.antMatchers("*");
+	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
