@@ -3,20 +3,28 @@
  */
 package com.exam.test.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
@@ -25,11 +33,10 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
 import com.exam.test.handler.CustomSuccessHandler;
+import com.exam.test.security.CustomOAuth2Provider;
 import com.exam.test.security.JwtAuthenticationFilter;
 import com.exam.test.security.JwtAuthorizationFilter;
 import com.exam.test.security.UserDetailsServiceImpl;
-
-import lombok.AllArgsConstructor;
 
 
 /**
@@ -41,10 +48,8 @@ import lombok.AllArgsConstructor;
  * 	  2> 입력한 정보가 일치한다면 사용자 정보를 사용할 수 있도록 허가한다(AuthenticationProvider)
  * 4. 지금 프로젝트에서는 UserDetailsService만 개발하고 AuthenticationProvider는 스프링에서 처리하도록 구현
  */
-@Configuration
 @EnableWebSecurity
 @EnableOAuth2Client	// oauth2 구성 설정
-@AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -58,6 +63,37 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	CustomSuccessHandler customSuccessHandler;
+	
+	// kakao Bean 등록
+	// Bean 등록 시 Boot가 자동으로 연결해주는 GOOGLE, GITHUB 등이 초기화 되서 쓸려면 InMemoryClientRegistrationRepository에 직접 넣어주어야 함
+	@Bean
+	public ClientRegistrationRepository clientRegistrationRepository(
+			// 깔끔하게 client 값을 가져올 수 있는 방법 찾아보기
+			@Value("${spring.security.oauth2.client.registration.google.client-id}") String googleClientId,
+			@Value("${spring.security.oauth2.client.registration.google.client-secret}") String googleClientSecret,
+			@Value("${spring.security.oauth2.client.registration.facebook.client-id}") String facebookClientId,
+			@Value("${spring.security.oauth2.client.registration.facebook.client-secret}") String facebookClientSecret,
+			@Value("${spring.security.oauth2.client.registration.kakao.client-id}") String kakaoClientId,
+			@Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String kakaoClientSecret) {
+		
+		System.out.println("############################");
+		
+		List<ClientRegistration> registrations = new ArrayList<>();
+		// registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao").clientId(kakaoClientId).clientSecret(kakaoClientSecret).jwkSetUri("temp").build());
+		registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao").clientId(kakaoClientId).clientSecret(kakaoClientSecret).build());
+		registrations.add(
+				CommonOAuth2Provider.GOOGLE.getBuilder("google")
+				.clientId(googleClientId)
+				.clientSecret(googleClientSecret)
+				.build());
+		registrations.add(
+				CommonOAuth2Provider.FACEBOOK.getBuilder("facebook")
+				.clientId(facebookClientId)
+				.clientSecret(facebookClientSecret)
+				.build());
+		
+		return new InMemoryClientRegistrationRepository(registrations);
+	}
 	
 	@Bean
 	public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
@@ -99,7 +135,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.addFilter(new JwtAuthorizationFilter(authenticationManager()));
 		
 		http.authorizeRequests()
-				.antMatchers("/login", "/oauth_login").permitAll()
+				.antMatchers("/login", "/oauth_login", "/test").permitAll()
 				.antMatchers("/user/**", "/user").hasAuthority("USER")
 				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
 				.anyRequest().authenticated().and()

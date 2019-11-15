@@ -73,7 +73,7 @@
                     contain
                     height="50"
                     width="1"
-                    @click="loginNaver"
+                    @click="loginKakao"
                 ></v-img>
                 <v-img
                     :src="require('../assets/google_login.png')"
@@ -113,6 +113,11 @@ export default {
         client_id: "659835413987-9g3fb7q88rpvfcdp4a4io568qv5lmehc.apps.googleusercontent.com",
         redirect_uri: "http://localhost:3000/oauth2/authorize-client/google"
     },
+    kakao: {
+        url: "https://kauth.kakao.com/oauth/authorize?response_type=code&scope=profile",
+        client_id: "1026731d07732a439790b2935243d042",
+        redirect_uri: "http://localhost:3000/oauth2/authorize-client/kakao"
+    },
     state: randomString()
     
   }),
@@ -124,10 +129,9 @@ export default {
         const api = this.facebook;
         location.href=`${api.url}?client_id=${api.client_id}&redirect_uri=${api.redirect_uri}&state=${this.state}`
     },
-    loginNaver: function() {
-        alert(this.state)
-        const api = this.naver;
-        // location.href=`${api.url}&client_id=${api.client_id}&redirect_uri=${api.redirect_uri}&state=123`
+    loginKakao: function() {
+        const api = this.kakao;
+        location.href=`${api.url}&client_id=${api.client_id}&redirect_uri=${api.redirect_uri}&state=${this.state}`
     }, 
     loginGoogle: function() {
         const api = this.google;
