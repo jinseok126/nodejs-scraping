@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,13 +29,14 @@ import org.springframework.security.oauth2.client.web.HttpSessionOAuth2Authoriza
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
+import com.exam.test.filter.JwtAuthenticationFilter;
+import com.exam.test.filter.JwtAuthorizationFilter;
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
 import com.exam.test.handler.CustomSuccessHandler;
 import com.exam.test.security.CustomOAuth2Provider;
-import com.exam.test.security.JwtAuthenticationFilter;
-import com.exam.test.security.JwtAuthorizationFilter;
 import com.exam.test.security.UserDetailsServiceImpl;
+
 
 
 /**
@@ -76,8 +76,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			@Value("${spring.security.oauth2.client.registration.kakao.client-id}") String kakaoClientId,
 			@Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String kakaoClientSecret) {
 		
-		System.out.println("############################");
-		
 		List<ClientRegistration> registrations = new ArrayList<>();
 		// registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao").clientId(kakaoClientId).clientSecret(kakaoClientSecret).jwkSetUri("temp").build());
 		registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao").clientId(kakaoClientId).clientSecret(kakaoClientSecret).build());
@@ -113,29 +111,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// auth.authenticationProvider(customAuthenticationProvider);
 	}
 	
-	@Override
-    public void configure(WebSecurity web) {
-		web.ignoring()
-			.antMatchers("*");
-	}
+//	@Override
+//    public void configure(WebSecurity web) {
+//		web.ignoring()
+//			.antMatchers("*");
+//	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.cors().and().csrf().disable();	// 개발시 에만 사용
 		
-		http.sessionManagement()
-			// SessionCreationPolicy.STATELESS 사용 시 OAuth2AuthenticationToken 못얻어옴
-			// 내 생각엔 SessionCreationPolicy.STATELESS 사용하게 되면 SecurityContext를 얻기 위한 HttpSession 얻지 못해서 그런거 같다
-			// .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-		
-			// SessionCreationPolicy.NEVER HttpSession를 사용하지 않지만 있으면 사용한다.
-			.sessionCreationPolicy(SessionCreationPolicy.NEVER).and()	
-			.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager()));
-		
 		http.authorizeRequests()
-				.antMatchers("/login", "/oauth_login", "/test").permitAll()
+				.antMatchers("/login", "/oauth_login", "/test", "/test1").permitAll()
 				.antMatchers("/user/**", "/user").hasAuthority("USER")
 				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
 				.anyRequest().authenticated().and()
@@ -148,7 +136,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		      .authorizationEndpoint()
 		      .baseUri("/oauth2/authorize-client")
 		      .authorizationRequestRepository(authorizationRequestRepository())
-		      .and().tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient());
+		      .and().tokenEndpoint().accessTokenResponseClient(this.accessTokenResponseClient())
+		      ;
+		http.sessionManagement()
+		// SessionCreationPolicy.STATELESS 사용 시 OAuth2AuthenticationToken 못얻어옴
+		// 내 생각엔 SessionCreationPolicy.STATELESS 사용하게 되면 SecurityContext를 얻기 위한 HttpSession 얻지 못해서 그런거 같다
+		// .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+	
+		// SessionCreationPolicy.NEVER HttpSession를 사용하지 않지만 있으면 사용한다.
+		.sessionCreationPolicy(SessionCreationPolicy.NEVER).and()	
+		.addFilter(new JwtAuthenticationFilter(authenticationManager()))
+		.addFilter(new JwtAuthorizationFilter(authenticationManager()));
+		
 	}
 	
 	@Bean
