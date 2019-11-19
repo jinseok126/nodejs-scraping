@@ -20,6 +20,6 @@ public class WebMvcConfigration implements WebMvcConfigurer {
 				.allowedOrigins("http://localhost:8080")
 				.allowedMethods("OPTIONS", "POST", "GET")
 				.allowedHeaders("content-type", "Access-Control-Allow-Headers", "Authorization")
-				.exposedHeaders("Authorization", "status");
+				.exposedHeaders("Authorization", "status", "Location");
 	}
 }

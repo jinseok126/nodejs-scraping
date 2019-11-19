@@ -94,13 +94,13 @@ export default {
     tokenCheck: function () {
       // console.log(localStorage.getItem("token"));
       // console.log(this.$store.state.token);
-      axios.get('/user/test').then(result => {
-        console.log(result);
-        const status = result.headers.status;
-        if(status === "false") {
-          alert("토큰 만료!");
-        }
-      })
+      // axios.get('/user/test').then(result => {
+      //   console.log(result);
+      //   const status = result.headers.status;
+      //   if(status === "false") {
+      //     alert("토큰 만료!");
+      //   }
+      // })
     } // tokenCheck Method
   } // methods
 }

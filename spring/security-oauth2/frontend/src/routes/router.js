@@ -9,6 +9,16 @@ import jwt_decode from 'jwt-decode'
 
 Vue.use(Router)
 
+const getCookie = function(name) {
+  const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return value? value[2] : null;
+}
+
+const deleteCookie = function(name) {
+  const date = new Date();
+  document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/";
+}
+
 const adminCheck = () => (to, from, next) => {
   const token = store.getters.getToken;
 
@@ -29,19 +39,25 @@ const adminCheck = () => (to, from, next) => {
   return next();   // 인증 성공 시
 };
 
-const test = () => (to, from, next) => {
-  console.log(to);
-  console.log(from)
-  
-  
-  // return next();   // 인증 성공 시
+const tokenValid = () => (to, from, next) => {
+
+  const authorization = getCookie("Authorization");
+
+  if(authorization !== null) {
+    // deleteCookie("Authorization");
+    const token = authorization.replace("Bearer+", "");
+    localStorage.setItem("token", token);
+    store.state.token = token;
+  }
+
+  return next();   // 인증 성공 시
 };
 
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', name: 'home', component: Home },
+    { path: '/', name: 'home', component: Home, beforeEnter: tokenValid() },
     { path: '/login', name: 'login', component: Login },
     { path: '/join', name: 'join', component: Join },
     { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() }

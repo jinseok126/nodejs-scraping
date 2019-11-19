@@ -68,7 +68,7 @@
                     @click="loginFacebook"
                 ></v-img>
                 <v-img
-                    :src="require('../assets/naver_login.png')"
+                    :src="require('../assets/kakao_login.png')"
                     class="my-3"
                     contain
                     height="50"
