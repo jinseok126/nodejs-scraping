@@ -20,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpConnection {
 
-	// 추후 RestTemplate을 사용하여 HTTP 통신 해보기
-
 	// HTTP POST request 
 	public Map<String, Object> sendPost(String targetUrl, String parameters) throws Exception {
 		

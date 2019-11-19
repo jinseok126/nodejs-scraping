@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,7 +29,6 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
@@ -76,6 +76,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			@Value("${spring.security.oauth2.client.registration.kakao.client-id}") String kakaoClientId,
 			@Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String kakaoClientSecret) {
 		
+		System.out.println("############################");
+		
 		List<ClientRegistration> registrations = new ArrayList<>();
 		// registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao").clientId(kakaoClientId).clientSecret(kakaoClientSecret).jwkSetUri("temp").build());
 		registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao").clientId(kakaoClientId).clientSecret(kakaoClientSecret).build());
@@ -111,16 +113,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// auth.authenticationProvider(customAuthenticationProvider);
 	}
 	
-	@Bean
-	public JwtAccessTokenConverter jwtAccessTokenConverter() {
-	  return new JwtAccessTokenConverter();
+	@Override
+    public void configure(WebSecurity web) {
+		web.ignoring()
+			.antMatchers("*");
 	}
-	
-//	@Override
-//    public void configure(WebSecurity web) {
-//		web.ignoring()
-//			.antMatchers("*");
-//	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -138,7 +135,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.addFilter(new JwtAuthorizationFilter(authenticationManager()));
 		
 		http.authorizeRequests()
-				.antMatchers("/login", "/oauth_login", "/test", "/test1").permitAll()
+				.antMatchers("/login", "/oauth_login", "/test").permitAll()
 				.antMatchers("/user/**", "/user").hasAuthority("USER")
 				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
 				.anyRequest().authenticated().and()
@@ -151,7 +148,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		      .authorizationEndpoint()
 		      .baseUri("/oauth2/authorize-client")
 		      .authorizationRequestRepository(authorizationRequestRepository())
-		      .and().tokenEndpoint().accessTokenResponseClient(this.accessTokenResponseClient());
+		      .and().tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient());
 	}
 	
 	@Bean
