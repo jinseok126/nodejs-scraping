@@ -15,4 +15,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PrincipalVO {
 	
+	private String accessTokenHash;
+	private String email;
+	private String fullName;
 }

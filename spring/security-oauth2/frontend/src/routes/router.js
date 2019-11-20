@@ -44,8 +44,8 @@ const tokenValid = () => (to, from, next) => {
   const authorization = getCookie("Authorization");
 
   if(authorization !== null) {
+    const token = authorization.replace("+", " ");
     deleteCookie("Authorization");
-    const token = authorization.replace("Bearer+", "");
     localStorage.setItem("token", token);
     store.state.token = token;
   }

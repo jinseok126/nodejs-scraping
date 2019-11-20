@@ -37,7 +37,7 @@ public class UserCreateTest {
 	public void test() {
 		
 		String roleName = "ADMIN";
-		String userId = "admin";
+		String userId = "test2";
 		String userPw = passwordEncoder.encode("123456");
 		
 		RolesEntity role = roleRepo.findByRole(roleName);

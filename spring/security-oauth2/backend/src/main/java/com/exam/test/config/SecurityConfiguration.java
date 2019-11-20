@@ -34,6 +34,7 @@ import com.exam.test.filter.JwtAuthorizationFilter;
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
 import com.exam.test.handler.CustomSuccessHandler;
+import com.exam.test.provider.JwtProvider;
 import com.exam.test.security.CustomOAuth2Provider;
 import com.exam.test.security.UserDetailsServiceImpl;
 
@@ -63,6 +64,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	CustomSuccessHandler customSuccessHandler;
+	
+	@Autowired
+	JwtProvider jwtProvider;
+	
+//	@Autowired
+//	CustomAuthenticationProvider customAuthenticationProvider;
 	
 	// kakao Bean 등록
 	// Bean 등록 시 Boot가 자동으로 연결해주는 GOOGLE, GITHUB 등이 초기화 되서 쓸려면 InMemoryClientRegistrationRepository에 직접 넣어주어야 함
@@ -102,6 +109,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
 	    // return new NimbusAuthorizationCodeTokenResponseClient();	// Deprecated
 		return new DefaultAuthorizationCodeTokenResponseClient();
+		// return new SpringWebClientAuthorizationCodeTokenResponseClient();
 	}
 	
 	@Override
@@ -136,18 +144,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		      .authorizationEndpoint()
 		      .baseUri("/oauth2/authorize-client")
 		      .authorizationRequestRepository(authorizationRequestRepository())
-		      .and().tokenEndpoint().accessTokenResponseClient(this.accessTokenResponseClient())
-		      ;
+		      .and().tokenEndpoint()
+		      .accessTokenResponseClient(this.accessTokenResponseClient());
 		http.sessionManagement()
 		// SessionCreationPolicy.STATELESS 사용 시 OAuth2AuthenticationToken 못얻어옴
 		// 내 생각엔 SessionCreationPolicy.STATELESS 사용하게 되면 SecurityContext를 얻기 위한 HttpSession 얻지 못해서 그런거 같다
 		// .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 	
 		// SessionCreationPolicy.NEVER HttpSession를 사용하지 않지만 있으면 사용한다.
-		.sessionCreationPolicy(SessionCreationPolicy.NEVER).and()	
-		.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-		.addFilter(new JwtAuthorizationFilter(authenticationManager()));
-		
+		.sessionCreationPolicy(SessionCreationPolicy.NEVER)
+		.and()
+		.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider))
+		.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtProvider));
 	}
 	
 	@Bean

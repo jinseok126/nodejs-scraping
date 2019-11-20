@@ -9,9 +9,9 @@ public class ParsingVO {
 
 	private boolean authenticated;
 	private List<AuthoritiesVO> authorities;
-	private Object authorizedClientRegistrationId;
+	private String authorizedClientRegistrationId;
 	private String credentials;
 	private Object details;
 	private String name;
-	private Object principal;
+	private PrincipalVO principal;
 }
