@@ -3,8 +3,10 @@
  */
 package com.exam.test.provider;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
 
 import org.springframework.stereotype.Component;
 
@@ -59,7 +61,7 @@ public class JwtProvider {
 		return token;
 	}
 	
-	public boolean tokenValid(String token) {
+	public boolean tokenValid(String token) throws IOException {
 		boolean flag = false;
 		
 		try {
@@ -76,7 +78,6 @@ public class JwtProvider {
         } catch (IllegalArgumentException exception) {
             log.warn("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
         }
-		
 		
 		return flag;
 	}

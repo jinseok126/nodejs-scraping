@@ -31,7 +31,7 @@ public class DemoController {
 	@RequestMapping("test1")
 	public void test(HttpServletResponse res) {
 	// public ResponseEntity<String> test(HttpServletResponse res) throws URISyntaxException {
-		System.out.println("@###################################");
+		log.info("DemoController test1");
 		// res.addHeader("Authorization", "Bearer test");
 //		Cookie cookie = new Cookie("test1", "cookieValue");
 //		res.addCookie(cookie);

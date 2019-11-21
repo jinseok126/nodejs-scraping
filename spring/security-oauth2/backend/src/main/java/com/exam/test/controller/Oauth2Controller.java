@@ -51,7 +51,6 @@ public class Oauth2Controller {
 	// public Principal home(Principal principal, OAuth2AuthenticationToken authentication, Authentication auth, HttpServletResponse res) throws JsonProcessingException, URISyntaxException, UnsupportedEncodingException {
 		
 		log.info("Oauth2Controller home");
-		log.info("Hash = "+jwtProvider.hashCode());
 		
 		if(!principal.equals(null)) {
 			// Client info

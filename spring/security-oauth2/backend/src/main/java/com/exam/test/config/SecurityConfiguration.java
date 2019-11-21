@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -119,11 +120,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// auth.authenticationProvider(customAuthenticationProvider);
 	}
 	
-//	@Override
-//    public void configure(WebSecurity web) {
-//		web.ignoring()
-//			.antMatchers("*");
-//	}
+	// security 관리가 필요없는 URL
+	@Override
+    public void configure(WebSecurity web) {
+		web.ignoring()
+			.antMatchers("/test");
+	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -131,7 +133,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable();	// 개발시 에만 사용
 		
 		http.authorizeRequests()
-				.antMatchers("/login", "/oauth_login", "/test", "/test1").permitAll()
+				.antMatchers("/login**", "/oauth_login", "/test1", "/").permitAll().and()
+			.authorizeRequests()
 				.antMatchers("/user/**", "/user").hasAuthority("USER")
 				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
 				.anyRequest().authenticated().and()
@@ -156,6 +159,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.and()
 		.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider))
 		.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtProvider));
+		// .addFilterBefore(new JwtTokenFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	@Bean
