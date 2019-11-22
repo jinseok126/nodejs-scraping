@@ -61,25 +61,32 @@ public class JwtProvider {
 		return token;
 	}
 	
-	public boolean tokenValid(String token) throws IOException {
-		boolean flag = false;
+	public String tokenValid(String token) throws IOException {
+		
+		String result = "false";
 		
 		try {
 			Jwts.parser().setSigningKey(getSecretKey()).parseClaimsJws(getReplaceToken(token));
-			flag = true;
+			result = "success";
 		} catch (ExpiredJwtException exception) {
             log.warn("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
+            result = exception.getMessage();
+            // Refresh token을 사용할 경우 Refresh token을 가져온 후 유효한 토큰일 경우 result를 success로 바꾼 후 accessToken 발급
         } catch (UnsupportedJwtException exception) {
             log.warn("Request to parse unsupported JWT : {} failed : {}", token, exception.getMessage());
+            result = exception.getMessage();
         } catch (MalformedJwtException exception) {
             log.warn("Request to parse invalid JWT : {} failed : {}", token, exception.getMessage());
+            result = exception.getMessage();
         } catch (SignatureException exception) {
             log.warn("Request to parse JWT with invalid signature : {} failed : {}", token, exception.getMessage());
+            result = exception.getMessage();
         } catch (IllegalArgumentException exception) {
             log.warn("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
+            result = exception.getMessage();
         }
 		
-		return flag;
+		return result;
 	}
 	
 	public Claims tokenInfo(String token) {

@@ -32,12 +32,12 @@ public class CustomDeniedHandler implements AccessDeniedHandler {
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		log.info("CustomDeniedHandler handle");
-		log.info("error: "+accessDeniedException.getMessage());
+		
 		response.setContentType("application/json;charset=UTF-8");
         response.setStatus(403);
         response.setLocale(null);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("message", "Access Denied");
+        map.put("message", accessDeniedException.getMessage());
         map.put("timestamp", LocalDateTime.now().toString());
         
         ObjectMapper objectMapper = new ObjectMapper();

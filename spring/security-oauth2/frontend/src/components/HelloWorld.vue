@@ -94,18 +94,15 @@ export default {
     tokenCheck: function () {
       // console.log(localStorage.getItem("token"));
       // console.log(this.$store.state.token);
-      axios.get('/user/test').then(result => {
-        console.log(result.status);
-        const status = result.headers.status;
-        if(status === "false") {
-          alert("토큰 만료!");
-        }
+      axios.get('/admin/demo').then(result => {
+      // axios.get('/admin/test').then(result => {
+        console.log(result);
       }).catch(err => {
-        console.log(err)
-        alert("Access Denied");
-        localStorage.removeItem("token");
-        location.href="/login";
-      }) 
+        console.log(err.response)
+        alert(err.response.data.message);
+        // localStorage.removeItem("token");
+        // location.href="/login";
+      })
     } // tokenCheck Method
   } // methods
 }

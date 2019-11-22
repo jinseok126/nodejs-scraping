@@ -124,7 +124,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
     public void configure(WebSecurity web) {
 		web.ignoring()
-			.antMatchers("/test");
+			.antMatchers("/test", "/test1");
 	}
 	
 	@Override
@@ -133,7 +133,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable();	// 개발시 에만 사용
 		
 		http.authorizeRequests()
-				.antMatchers("/login**", "/oauth_login", "/test1", "/").permitAll().and()
+				.antMatchers("/login**", "/oauth_login").permitAll().and()
 			.authorizeRequests()
 				.antMatchers("/user/**", "/user").hasAuthority("USER")
 				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")

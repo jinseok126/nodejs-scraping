@@ -45,7 +45,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 									FilterChain filterChain) throws ServletException, IOException {
 		
 		log.info("JwtAuthorizationFilter doFilterInternal");
-		if(request.getHeader("Origin") != null && request.getHeader("Host") != "localhost:3000") {
+		log.info("URL = "+request.getRequestURL());
+		log.info(request.getRequestURL().toString());
+		log.info("flag = "+request.getRequestURL().toString().equals("http://localhost:3000/"));
+		
+		if(!request.getRequestURL().toString().equals("http://localhost:3000/")) {
 			UsernamePasswordAuthenticationToken authentication = getAuthentication(request, response);
 			
 			if(authentication != null) {
@@ -64,10 +68,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		log.info("request.getHeader(\"Host\") = "+request.getHeader("Host"));
 		log.info("request.getHeader(\"Origin\") = "+request.getHeader("Origin"));
 		
+		CustomDeniedHandler customDeniedHandler = new CustomDeniedHandler();
+		
 		if(!StringUtils.isEmpty(token) && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 			
+			String result = jwtProvider.tokenValid(token); 
+			
 			// 유효한 토큰일 경우
-			if(jwtProvider.tokenValid(token)) {
+			if(result.equals("success")) {
 				Claims claims = jwtProvider.tokenInfo(token);
 				String username = claims.getSubject();
 				
@@ -80,8 +88,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 					return new UsernamePasswordAuthenticationToken(username, null, authorities);
 				}
 			} else {
-				new CustomDeniedHandler().handle(request, response, new AccessDeniedException(token));
+				customDeniedHandler.handle(request, response, new AccessDeniedException(result.toString()));
 			}
+		} else {
+			customDeniedHandler.handle(request, response, new AccessDeniedException("토큰이 존재하지않음"));
 		}
 		
 		
