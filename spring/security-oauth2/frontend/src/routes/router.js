@@ -4,8 +4,9 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Join from '../views/Join.vue'
 import AdminHome from '../views/admin/AdminHome'
-import store from '../store'
+import store from '../store/index'
 import jwt_decode from 'jwt-decode'
+import ChatRoom from '../views/ChatRoom.vue'
 
 Vue.use(Router)
 
@@ -60,7 +61,8 @@ export default new Router({
     { path: '/', name: 'home', component: Home, beforeEnter: tokenValid() },
     { path: '/login', name: 'login', component: Login },
     { path: '/join', name: 'join', component: Join },
-    { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() }
+    { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() },
+    { path: '/chat/:username', name: 'chat', component: ChatRoom }
   ]
 })
 

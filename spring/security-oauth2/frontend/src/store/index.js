@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import router from './routes/router';
+import router from '../routes/router';
 import Axios from 'axios';
 import qs from 'querystring'
 
