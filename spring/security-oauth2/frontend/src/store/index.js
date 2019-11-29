@@ -6,18 +6,32 @@ import qs from 'querystring'
 
 Vue.use(Vuex)
 
+function parseJwt (tokenValue) {
+  const token =  tokenValue.replace("Bearer ", "");
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+};
+
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('token')
+    token: localStorage.getItem('token'),
+    username: localStorage.getItem('token') == null ? null : parseJwt(localStorage.getItem('token')).sub
   },
 
   // state 값을 변경하는 부분
   mutations: {
     removeToken: function (state, payload) {
       state.token = null
+      state.username = null
     },
     addToken: function (state, payload) {
       state.token = localStorage.getItem('token');
+      state.username = state.token == null ? null : parseJwt(localStorage.getItem('token')).sub
     }
   },
   actions: {
@@ -35,28 +49,13 @@ export default new Vuex.Store({
         const token = result.headers.authorization;
         if(token !== undefined) {
           localStorage.setItem('token', token);
+          
           context.commit('addToken');
           router.push("/");
         } else {
           alert("정보가 없습니다.");
         }
       })
-
-      // axios.post('/user/loginCheck', {
-      //   userId: payload.id,
-      //   userPw: payload.pw
-      // }).then((result) => {
-      //   const resultData = result.data
-      //   if (resultData.check === 1) {
-      //     // localstorage에 토큰 저장 후 메인 화면으로 이동
-      //     localStorage.setItem('token', resultData.token);
-      //     context.commit('addToken');
-      //     router.push("/");
-      //   } else {
-      //     alert('login failure')
-      //   }
-      // })
-
     }, // login
     logout: function (context) {
       localStorage.removeItem('token')
@@ -71,6 +70,9 @@ export default new Vuex.Store({
   getters: {
     getToken: function (state) {
       return state.token
-    }
+    },
+    getUsername: function(state) {
+      return state.username
+    } 
   }
 })

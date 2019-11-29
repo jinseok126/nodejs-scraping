@@ -21,6 +21,7 @@
 
       <v-flex>
         <v-btn @click="tokenCheck">test</v-btn>
+        <v-btn @click="$router.push('chat')">Chat</v-btn>
       </v-flex>
       
     </v-layout>
@@ -94,7 +95,8 @@ export default {
     tokenCheck: function () {
       // console.log(localStorage.getItem("token"));
       // console.log(this.$store.state.token);
-      axios.get('/admin/demo').then(result => {
+      // axios.get('/admin/demo').then(result => {
+      axios.get('/test').then(result => {
       // axios.get('/admin/test').then(result => {
         console.log(result);
       }).catch(err => {

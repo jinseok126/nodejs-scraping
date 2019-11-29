@@ -48,7 +48,7 @@ const tokenValid = () => (to, from, next) => {
     const token = authorization.replace("+", " ");
     deleteCookie("Authorization");
     localStorage.setItem("token", token);
-    store.state.token = token;
+    store.commit('addToken')
   }
 
   return next();   // 인증 성공 시
@@ -62,7 +62,7 @@ export default new Router({
     { path: '/login', name: 'login', component: Login },
     { path: '/join', name: 'join', component: Join },
     { path: '/admin', name: 'adminHome', component: AdminHome, beforeEnter: adminCheck() },
-    { path: '/chat/:username', name: 'chat', component: ChatRoom }
+    { path: '/chat', name: 'chat', component: ChatRoom }
   ]
 })
 

@@ -44,8 +44,8 @@
                     ></v-text-field>
 
                     <v-text-field
-                    id="password"
                     label="Password"
+                    autocomplete="off"
                     name="password"
                     prepend-icon="lock"
                     type="password"
