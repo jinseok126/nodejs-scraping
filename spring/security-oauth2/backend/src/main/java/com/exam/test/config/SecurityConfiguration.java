@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,8 +29,6 @@ import org.springframework.security.oauth2.client.web.HttpSessionOAuth2Authoriza
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
-import com.exam.test.filter.JwtAuthenticationFilter;
-import com.exam.test.filter.JwtAuthorizationFilter;
 import com.exam.test.handler.CustomDeniedHandler;
 import com.exam.test.handler.CustomFailureHandler;
 import com.exam.test.handler.CustomSuccessHandler;
@@ -124,7 +121,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
     public void configure(WebSecurity web) {
 		web.ignoring()
-			.antMatchers("/test", "/test1");
+			// .antMatchers("/test", "/spring-websocket/**");
+			.antMatchers("/**");
 	}
 	
 	@Override
@@ -132,8 +130,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		http.cors().and().csrf().disable();	// 개발시 에만 사용
 		
+		/*
 		http.authorizeRequests()
-				.antMatchers("/login**", "/oauth_login").permitAll().and()
+				.antMatchers("/login**", "/oauth_login", "/chat", "/socket.io").permitAll().and()
 			.authorizeRequests()
 				.antMatchers("/user/**", "/user").hasAuthority("USER")
 				.antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
@@ -160,6 +159,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider))
 		.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtProvider));
 		// .addFilterBefore(new JwtTokenFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+		*/
 	}
 	
 	@Bean

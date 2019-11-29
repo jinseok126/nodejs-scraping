@@ -3,12 +3,12 @@ import Stomp from "webstomp-client";
 
 import store from '@/store/index'
 
-let socket = new SockJS("http://localhost:3000/spring-websocket");
+let socket = new SockJS("https://localhost:3000/spring-websocket");
 let stompClient = Stomp.over(socket);
 
 const connection = function(msgs) {
     
-  socket = new SockJS("http://localhost:3000/spring-websocket");
+  socket = new SockJS("https://localhost:3000/spring-websocket");
   stompClient = Stomp.over(socket);
 
   stompClient.connect({}, frame => {

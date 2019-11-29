@@ -35,8 +35,8 @@ public class JwtProvider {
 	private String TOKEN_TYPE = SecurityConstants.TOKEN_TYPE;
 	private String TOKEN_ISSUER = SecurityConstants.TOKEN_ISSUER;
 	private String TOKEN_AUDIENCE = SecurityConstants.TOKEN_AUDIENCE;
-	private int TOKEN_EXPIRED = 864000000;
-	// private int TOKEN_EXPIRED = 1;
+	// private int TOKEN_EXPIRED = 864000000;
+	private int TOKEN_EXPIRED = 1;
 	
 	private byte[] getSecretKey() {
 		return JWT_SECRET.getBytes();

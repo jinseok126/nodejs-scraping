@@ -26,6 +26,7 @@ export default {
     },
   },
   created() {
+    alert(process.env.NODE_ENV)
     StompConnect.connection(this.msgs)
   },
   beforeDestroy() {
