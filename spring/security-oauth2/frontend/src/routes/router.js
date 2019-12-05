@@ -11,13 +11,14 @@ import ChatRoom from '../views/ChatRoom.vue'
 Vue.use(Router)
 
 const getCookie = function(name) {
+  // console.log(document.cookie)
   const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
   return value? value[2] : null;
 }
 
 const deleteCookie = function(name) {
   const date = new Date();
-  document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/";
+  document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/; " + "domain=spring-vue-deploy-demo.firebaseapp.com";
 }
 
 const adminCheck = () => (to, from, next) => {
@@ -41,7 +42,7 @@ const adminCheck = () => (to, from, next) => {
 };
 
 const tokenValid = () => (to, from, next) => {
-
+  
   const authorization = getCookie("Authorization");
 
   if(authorization !== null) {
@@ -50,7 +51,7 @@ const tokenValid = () => (to, from, next) => {
     localStorage.setItem("token", token);
     store.commit('addToken')
   }
-
+  
   return next();   // 인증 성공 시
 };
 

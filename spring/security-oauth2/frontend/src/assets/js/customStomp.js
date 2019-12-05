@@ -3,12 +3,15 @@ import Stomp from "webstomp-client";
 
 import store from '@/store/index'
 
-let socket = new SockJS("https://localhost:3000/spring-websocket");
+// const baseurl = "https://localhost:3000/spring-websocket";
+const baseurl = "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/spring-websocket";
+
+let socket = new SockJS(baseurl);
 let stompClient = Stomp.over(socket);
 
 const connection = function(msgs) {
     
-  socket = new SockJS("https://localhost:3000/spring-websocket");
+  socket = new SockJS(baseurl);
   stompClient = Stomp.over(socket);
 
   stompClient.connect({}, frame => {
