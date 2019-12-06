@@ -65,7 +65,7 @@
                     contain
                     height="50"
                     width="1"
-                    @click="loginNaver"
+                    @click="loginFacebook"
                 ></v-img>
                 <v-img
                     :src="require('../assets/naver_login.png')"
@@ -73,7 +73,7 @@
                     contain
                     height="50"
                     width="1"
-                    @click="loginFacebook"
+                    @click="loginNaver"
                 ></v-img>
                 <v-img
                     :src="require('../assets/kakao_login.png')"
@@ -109,26 +109,26 @@ export default {
     facebook: {
         url: "https://www.facebook.com/dialog/oauth",
         client_id: 457224128230213,
-        // redirect_uri: "http://localhost:3000/oauth2/authorize-client/facebook"
-        redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/facebook"
+        redirect_uri: "http://localhost:3000/api/oauth2/authorize-client/facebook"
+        // redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/facebook"
     },
     naver: {
         url: "https://nid.naver.com/oauth2.0/authorize?response_type=code",
         client_id: "GhIlT_MuU_qke9rxjV8q",
-        // redirect_uri: "http://localhost:3000/oauth2/authorize-client/naver"
-        redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/naver"
+        redirect_uri: "http://localhost:3000/api/oauth2/authorize-client/naver"
+        // redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/naver"
     }, 
     google: {
         url: "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&scope=openid",
         client_id: "659835413987-9g3fb7q88rpvfcdp4a4io568qv5lmehc.apps.googleusercontent.com",
-        // redirect_uri: "https://localhost:3000/oauth2/authorize-client/google"
-        redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/google"
+        redirect_uri: "http://localhost:3000/api/oauth2/authorize-client/google"
+        // redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/google"
     },
     kakao: {
         url: "https://kauth.kakao.com/oauth/authorize?response_type=code&scope=profile",
         client_id: "1026731d07732a439790b2935243d042",
-        // redirect_uri: "http://localhost:3000/oauth2/authorize-client/kakao"
-        redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/kakao"
+        redirect_uri: "http://localhost:3000/api/oauth2/authorize-client/kakao"
+        // redirect_uri: "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/oauth2/authorize-client/kakao"
     },
     state: randomString()
     

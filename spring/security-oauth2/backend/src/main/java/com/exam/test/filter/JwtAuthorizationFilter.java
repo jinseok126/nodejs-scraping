@@ -45,11 +45,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 									FilterChain filterChain) throws ServletException, IOException {
 		
 		log.info("JwtAuthorizationFilter doFilterInternal");
-		log.info("URL = "+request.getRequestURL());
-		log.info(request.getRequestURL().toString());
-		log.info("flag = "+request.getRequestURL().toString().equals("http://localhost:3000/"));
+		log.info("URL = "+request.getRequestURL().toString());
+		log.info("URI = "+request.getRequestURI());
 		
-		if(!request.getRequestURL().toString().equals("http://localhost:3000/")) {
+		if(!request.getRequestURI().equals("/api/")) {
 			UsernamePasswordAuthenticationToken authentication = getAuthentication(request, response);
 			
 			if(authentication != null) {

@@ -3,8 +3,8 @@ import Stomp from "webstomp-client";
 
 import store from '@/store/index'
 
-// const baseurl = "https://localhost:3000/spring-websocket";
-const baseurl = "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/spring-websocket";
+const baseurl = "http://localhost:3000/spring-websocket";
+// const baseurl = "https://test.spring-vue-deploy-demo.firebaseapp.com:3000/spring-websocket";
 
 let socket = new SockJS(baseurl);
 let stompClient = Stomp.over(socket);

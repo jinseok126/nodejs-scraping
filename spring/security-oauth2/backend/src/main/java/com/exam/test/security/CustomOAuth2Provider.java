@@ -23,11 +23,27 @@ public enum CustomOAuth2Provider {
         public ClientRegistration.Builder getBuilder(String registrationId) {
         	ClientRegistration.Builder builder = getBuilder(registrationId, ClientAuthenticationMethod.POST, DEFAULT_REDIRECT_URL);
         	builder.scope("profile");
-        	builder.authorizationUri("https://kauth.kakao.com/oauth/authorize");
-        	builder.tokenUri("https://kauth.kakao.com/oauth/token");
-        	builder.userInfoUri("https://kapi.kakao.com/v1/user/me");
+        	builder.authorizationUri("https://nid.naver.com/oauth2.0/authorize");
+        	builder.tokenUri("https://nid.naver.com/oauth2.0/token");
+        	builder.userInfoUri("https://openapi.naver.com/v1/nid/me");
         	builder.userNameAttributeName("id");
         	builder.clientName("Kakao");
+          return builder;
+        }
+        
+    },
+    
+    NAVER {
+    	
+        @Override
+        public ClientRegistration.Builder getBuilder(String registrationId) {
+        	ClientRegistration.Builder builder = getBuilder(registrationId, ClientAuthenticationMethod.POST, DEFAULT_REDIRECT_URL);
+        	builder.scope("profile");
+        	builder.authorizationUri("https://nid.naver.com/oauth2.0/authorize");
+        	builder.tokenUri("https://nid.naver.com/oauth2.0/token");
+        	builder.userInfoUri("https://openapi.naver.com/v1/nid/me");
+        	builder.userNameAttributeName("id");
+        	builder.clientName("Naver");
           return builder;
         }
         

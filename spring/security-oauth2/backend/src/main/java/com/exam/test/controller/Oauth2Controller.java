@@ -79,16 +79,23 @@ public class Oauth2Controller {
 				// 여기선 cookie에 담고 클라이언트에서 cookie 확인 후 존재하면 localStorage에 담고 삭제하는 로직을 만듦
 				Cookie cookie = new Cookie("Authorization", URLEncoder.encode(
 						SecurityConstants.TOKEN_PREFIX+jwtProvider.createToken(parsing.getName(), roles), "utf-8"));
+//				cookie.setSecure(true); // https
+//				cookie.setHttpOnly(true);
+//				cookie.setPath("/");
+				// cookie.setDomain("spring-vue-deploy-demo.firebaseapp.com");
 			    res.addCookie(cookie);
 			}
 		} // if
 		
+		// String uri = "https://localhost:3000/test";
 		String uri = "http://localhost:8080";
+		// String uri = "https://spring-vue-deploy-demo.firebaseapp.com";
 	    URI location = new URI(uri);
 	    
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.set("Content-Type", "text/html");
 	    headers.setLocation(location);
+	    // headers.set("Set-Cookie", "Authorization="+SecurityConstants.TOKEN_PREFIX+token+"; secure; HttpOnly; SameSite=None");
 	    
 	    return new ResponseEntity<String>(headers, HttpStatus.SEE_OTHER);
 	    // return principal;
