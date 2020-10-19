@@ -21,7 +21,10 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
+  mode: 'history',
+  linkActiveClass: 'active',
+  base: 'api',
+  root: 'api',
   routes: routes
 })
 
